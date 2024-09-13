@@ -11,7 +11,7 @@ namespace ProyectoCatedra_DES.Models
         public string  CodigoProucto { get; set; }
 
         [Required]
-        [StringLength(255)]
+        [StringLength(100)]
         public string NombreProducto { get; set; }
 
         [StringLength(255)]

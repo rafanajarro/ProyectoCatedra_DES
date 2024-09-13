@@ -25,19 +25,21 @@ namespace ProyectoCatedra_DES.Models
         [StringLength(100)]
         public string Nombre { get; set; }
 
+        [Required]
         [StringLength(100)]
         public string Apellido { get; set; }
 
         [Required]
         public bool Activo { get; set; }
 
-        [ForeignKey("RolesUsuario")]
-        public int RolId { get; set; }
-        public RolesUsuario RolUsuario { get; set; }
+        [Required]
+        public string Rol { get; set; }
 
+        [Required]
         [DataType(DataType.DateTime)]
         public DateTime? FechaCreacion { get; set; }
 
+        [Required]
         [DataType(DataType.DateTime)]
         public DateTime? UltimoAcceso { get; set; }
     }
