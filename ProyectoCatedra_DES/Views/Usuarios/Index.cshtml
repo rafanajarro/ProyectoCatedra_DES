@@ -1,83 +1,60 @@
-﻿@model IEnumerable<ProyectoCatedra_DES.Models.Usuario>
+﻿@using ProyectoCatedra_DES.Models
+@model Usuario
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Login";
 }
 
-<h1>Index</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-lg">
+                <div class="card-header bg-white text-center">
+                    <h3 class="fw-bold text-primary">Acceso a la Cuenta</h3>
+                    <p class="text-muted">Bienvenido de nuevo, por favor ingresa tus credenciales</p>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Login" method="post">
+                        <div class="form-floating mb-3">
+                            <input asp-for="NombreUsuario" class="form-control rounded-pill" placeholder="Nombre de usuario" />
+                            <label asp-for="NombreUsuario">Nombre de usuario</label>
+                            <span asp-validation-for="NombreUsuario" class="text-danger small"></span>
+                        </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NombreUsuario)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CorreoElectronico)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Apellido)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Activo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rol)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaCreacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UltimoAcceso)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NombreUsuario)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CorreoElectronico)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Apellido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Activo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rol)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaCreacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UltimoAcceso)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.UsuarioId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.UsuarioId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.UsuarioId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" class="form-control rounded-pill" type="password" placeholder="Contraseña" />
+                            <label asp-for="Password">Contraseña</label>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill">Ingresar</button>
+                        </div>
+
+                        <!-- Comentado por si se habilita en el futuro -->
+                        <!-- <div class="text-center mt-3">
+                            <a asp-action="ForgotPassword" class="text-secondary">¿Olvidaste tu contraseña?</a>
+                        </div> -->
+
+                        <div class="text-center mt-3">
+                            <span class="text-muted">¿No tienes cuenta?</span> 
+                            <a asp-action="RegisterView" class="text-primary fw-bold">Regístrate</a>
+                        </div>
+                    </form>
+                    @if (TempData["Message"] != null)
+                    {
+                            <div class="alert alert-success mt-4 text-center">
+                            @TempData["Message"]
+                            </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                            <div class="alert alert-danger mt-4 text-center">
+                            @TempData["Error"]
+                            </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

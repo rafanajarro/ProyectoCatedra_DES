@@ -1,17 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProyectoCatedra_DES.Models
 {
-    public class Usuario
+    public class RegisterDto
     {
-        [Key]
-        public int UsuarioId { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string NombreUsuario { get; set; }
-
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
@@ -47,13 +39,5 @@ namespace ProyectoCatedra_DES.Models
         [Required]
         [DataType(DataType.DateTime)]
         public DateTime? FechaNacimiento { get; set; }
-
-        [Required]
-        [DataType(DataType.DateTime)]
-        public DateTime? FechaCreacion { get; set; }
-
-        [Required]
-        [DataType(DataType.DateTime)]
-        public DateTime? UltimoAcceso { get; set; }
     }
 }

@@ -124,7 +124,7 @@ namespace ProyectoCatedra_DES.Migrations
                     b.Property<bool>("Activo")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Apellido")
+                    b.Property<string>("Apellidos")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -134,7 +134,16 @@ namespace ProyectoCatedra_DES.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("Dui")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
+
                     b.Property<DateTime?>("FechaCreacion")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaNacimiento")
                         .IsRequired()
                         .HasColumnType("datetime2");
 
@@ -155,6 +164,11 @@ namespace ProyectoCatedra_DES.Migrations
                     b.Property<string>("Rol")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
 
                     b.Property<DateTime?>("UltimoAcceso")
                         .IsRequired()

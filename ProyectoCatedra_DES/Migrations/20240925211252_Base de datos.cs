@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoCatedra_DES.Migrations
 {
     /// <inheritdoc />
-    public partial class Migracioninicial : Migration
+    public partial class Basededatos : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,10 +33,13 @@ namespace ProyectoCatedra_DES.Migrations
                     NombreUsuario = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CorreoElectronico = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Telefono = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Apellido = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Apellidos = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Dui = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
                     Activo = table.Column<bool>(type: "bit", nullable: false),
                     Rol = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaNacimiento = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UltimoAcceso = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },

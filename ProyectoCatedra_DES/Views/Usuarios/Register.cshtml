@@ -1,0 +1,76 @@
+﻿@using ProyectoCatedra_DES.Models
+@model Usuario
+
+@{
+    ViewData["Title"] = "Crear Usuario";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-lg">
+                <div class="card-header bg-white text-center">
+                    <h2 class="fw-bold text-primary">@ViewData["Title"]</h2>
+                    <p class="text-muted">Complete los campos para crear una nueva cuenta</p>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Register" method="post">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Nombre" class="form-control rounded-pill" placeholder="Nombre" />
+                            <label asp-for="Nombre">Nombre</label>
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Apellidos" class="form-control rounded-pill" placeholder="Apellidos" />
+                            <label asp-for="Apellidos">Apellidos</label>
+                            <span asp-validation-for="Apellidos" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" class="form-control rounded-pill" type="password" placeholder="Contraseña" />
+                            <label asp-for="Password">Contraseña</label>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="CorreoElectronico" class="form-control rounded-pill" placeholder="Correo electrónico" />
+                            <label asp-for="CorreoElectronico">Correo electrónico</label>
+                            <span asp-validation-for="CorreoElectronico" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Telefono" class="form-control rounded-pill" placeholder="Teléfono" />
+                            <label asp-for="Telefono">Teléfono</label>
+                            <span asp-validation-for="Telefono" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Dui" class="form-control rounded-pill" placeholder="Dui" />
+                            <label asp-for="Dui">DUI</label>
+                            <span asp-validation-for="Dui" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <select asp-for="Rol" class="form-select rounded-pill" aria-label="Seleccione su rol">
+                                <option selected value="Cliente">Cliente</option>
+                            </select>
+                            <label asp-for="Rol">Rol de usuario</label>
+                            <span asp-validation-for="Rol" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="FechaNacimiento" type="date" class="form-control rounded-pill" placeholder="Fecha de nacimiento" />
+                            <label asp-for="FechaNacimiento">Fecha de nacimiento</label>
+                            <span asp-validation-for="FechaNacimiento" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
