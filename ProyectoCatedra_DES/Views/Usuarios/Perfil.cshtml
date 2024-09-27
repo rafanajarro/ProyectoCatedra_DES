@@ -1,0 +1,78 @@
+﻿@model ProyectoCatedra_DES.Models.Usuario
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-start" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="@Url.Action("Dashboard", "Usuarios")">Regresar</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenido del Dashboard -->
+<div class="container mt-2">
+    <div class="row justify-content-center">
+        <h2>Perfil de Usuario</h2>
+
+        <div class="card">
+            <div class="card-header">
+                Detalles del Usuario
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Nombre de Usuario</dt>
+                    <dd class="col-sm-9">@Model.NombreUsuario</dd>
+
+                    <dt class="col-sm-3">Correo Electrónico</dt>
+                    <dd class="col-sm-9">@Model.CorreoElectronico</dd>
+
+                    <dt class="col-sm-3">Teléfono</dt>
+                    <dd class="col-sm-9">@Model.Telefono</dd>
+
+                    <dt class="col-sm-3">Nombre</dt>
+                    <dd class="col-sm-9">@Model.Nombre</dd>
+
+                    <dt class="col-sm-3">Apellidos</dt>
+                    <dd class="col-sm-9">@Model.Apellidos</dd>
+
+                    <dt class="col-sm-3">DUI</dt>
+                    <dd class="col-sm-9">@Model.Dui</dd>
+
+                    <dt class="col-sm-3">Rol</dt>
+                    <dd class="col-sm-9">@Model.Rol</dd>
+
+                    <dt class="col-sm-3">Fecha de Nacimiento</dt>
+                    <dd class="col-sm-9">@Model.FechaNacimiento?.ToString("dd/MM/yyyy")</dd>
+
+                    <dt class="col-sm-3">Fecha de Creación</dt>
+                    <dd class="col-sm-9">@Model.FechaCreacion?.ToString("dd/MM/yyyy HH:mm:ss")</dd>
+
+                    <dt class="col-sm-3">Último Acceso</dt>
+                    <dd class="col-sm-9">@Model.UltimoAcceso?.ToString("dd/MM/yyyy HH:mm:ss")</dd>
+                </dl>
+            </div>
+        </div>
+
+        <a asp-action="Edit" asp-route-id="@Model.UsuarioId" class="btn btn-primary">Editar Perfil</a>
+        <br />
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success mt-4 text-center">
+                @TempData["Message"]
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger mt-4 text-center">
+                @TempData["Error"]
+            </div>
+        }
+    </div>
+</div>

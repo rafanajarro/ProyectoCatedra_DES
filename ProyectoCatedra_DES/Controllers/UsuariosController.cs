@@ -26,6 +26,41 @@ namespace ProyectoCatedra_DES.Controllers
             _emailService = emailService;
         }
 
+        // Deshabilitar Usuario
+        [HttpPost, ActionName("Deshabilitar")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Deshabilitar(int usuarioId)
+        {
+            if (usuarioId == null)
+            {
+                return NotFound();
+            }
+
+            var dbUsuario = await _context.Usuarios
+               .FirstOrDefaultAsync(m => m.UsuarioId == usuarioId);
+
+            if (dbUsuario == null)
+            {
+                return NotFound();
+            }
+
+            dbUsuario.Activo = false;
+            _context.Entry(dbUsuario).Property(u => u.Activo).IsModified = true;
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "El usuario " + dbUsuario.NombreUsuario + " ha sido deshabilitado correctamente.";
+            return RedirectToAction("Dashboard", "Usuarios");
+        }
+
+        // Ver Perfil Usuario
+        public async Task<IActionResult> VerPerfil()
+        {
+            var nombreUsuario = HttpContext.Session.GetString("NombreUsuario");
+            var dbUsername = _context.Usuarios.FirstOrDefault(x => x.NombreUsuario == nombreUsuario);
+            return View("Perfil", dbUsername);
+        }
+
+        // Cerrar sesion Usuario
         public ActionResult CerrarSesion()
         {
             HttpContext.Session.Clear();
@@ -36,6 +71,20 @@ namespace ProyectoCatedra_DES.Controllers
         // DASHBOARD Usuario
         public async Task<IActionResult> Dashboard()
         {
+            var nombreUsuario = HttpContext.Session.GetString("NombreUsuario");
+            var dbUsuario = await _context.Usuarios
+            .FirstOrDefaultAsync(u => u.NombreUsuario == nombreUsuario);
+
+
+            if (dbUsuario != null)
+            {
+                if (dbUsuario.Rol == "Admin")
+                {
+                    var usuarios = await _context.Usuarios.ToListAsync();
+                    return View("Dashboard", usuarios);
+                }
+            }
+
             return View("Dashboard");
         }
 
@@ -45,21 +94,35 @@ namespace ProyectoCatedra_DES.Controllers
             if (loginDto != null)
             {
                 var revisarUsuarioDb = await _context.Usuarios.FirstOrDefaultAsync(m => m.NombreUsuario == loginDto.NombreUsuario);
-                Console.WriteLine(revisarUsuarioDb);
+
                 if (revisarUsuarioDb != null)
                 {
-                    var resultado = _passwordHasher.VerifyHashedPassword(revisarUsuarioDb, revisarUsuarioDb.Password, loginDto.Password);
-                    if (resultado == PasswordVerificationResult.Success)
+                    if (revisarUsuarioDb.Activo == true)
                     {
-                        HttpContext.Session.SetString("NombreUsuario", loginDto.NombreUsuario);
-                        HttpContext.Session.SetString("RolUsuario", revisarUsuarioDb.Rol);
-                        HttpContext.Session.SetString("Nombre", revisarUsuarioDb.Nombre);
-                        HttpContext.Session.SetString("Apellidos", revisarUsuarioDb.Apellidos);
-                        return RedirectToAction("Dashboard", "Usuarios");
+                        var resultado = _passwordHasher.VerifyHashedPassword(revisarUsuarioDb, revisarUsuarioDb.Password, loginDto.Password);
+                        if (resultado == PasswordVerificationResult.Success)
+                        {
+                            HttpContext.Session.SetString("NombreUsuario", loginDto.NombreUsuario);
+                            HttpContext.Session.SetString("RolUsuario", revisarUsuarioDb.Rol);
+                            HttpContext.Session.SetString("Nombre", revisarUsuarioDb.Nombre);
+                            HttpContext.Session.SetString("Apellidos", revisarUsuarioDb.Apellidos);
+
+                            // Actualizar ultimo acceso
+                            revisarUsuarioDb.UltimoAcceso = DateTime.Now;
+                            _context.Entry(revisarUsuarioDb).Property(u => u.UltimoAcceso).IsModified = true;
+                            await _context.SaveChangesAsync();
+
+                            return RedirectToAction("Dashboard", "Usuarios");
+                        }
+                        else
+                        {
+                            TempData["Error"] = "Error. Credenciales incorrectas.";
+                            return RedirectToAction("Index", "Usuarios");
+                        }
                     }
                     else
                     {
-                        TempData["Error"] = "Error. Credenciales incorrectas.";
+                        TempData["Error"] = "Error. Este usuario esta deshabilitado.";
                         return RedirectToAction("Index", "Usuarios");
                     }
                 }
@@ -198,15 +261,51 @@ namespace ProyectoCatedra_DES.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UsuarioId,NombreUsuario,Password,CorreoElectronico,Nombre,Apellido,Activo,Rol,FechaCreacion,UltimoAcceso")] Usuario usuario)
+        public async Task<IActionResult> Create(RegisterDto registerDto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(usuario);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return BadRequest(ModelState);
             }
-            return View(usuario);
+
+            // Codigo de username
+            string codigoUsername = GenerarUsername(registerDto.Apellidos);
+            var dbUsername = _context.Usuarios.FirstOrDefault(x => x.NombreUsuario == codigoUsername);
+
+            while (dbUsername != null)
+            {
+                codigoUsername = GenerarUsername(registerDto.Apellidos);
+            }
+
+            //Verificar no exista un usuario con otro correo
+            var dbUserCorreo = _context.Usuarios.FirstOrDefault(x => x.CorreoElectronico == registerDto.CorreoElectronico);
+
+            if (dbUserCorreo == null)
+            {
+                _context.Usuarios.Add(new Usuario
+                {
+                    NombreUsuario = codigoUsername,
+                    Password = _passwordHasher.HashPassword(null, registerDto.Password),
+                    CorreoElectronico = registerDto.CorreoElectronico,
+                    Telefono = registerDto.Telefono,
+                    Nombre = registerDto.Nombre,
+                    Apellidos = registerDto.Apellidos,
+                    Dui = registerDto.Dui,
+                    Activo = true,
+                    Rol = registerDto.Rol,
+                    FechaNacimiento = registerDto.FechaNacimiento,
+                    FechaCreacion = DateTime.Now,
+                    UltimoAcceso = DateTime.Now,
+                });
+                _context.SaveChanges();
+                TempData["Message"] = "Usuario creado con exito.";
+                return RedirectToAction("Dashboard", "Usuarios");
+            }
+            else
+            {
+                TempData["Error"] = "Error. Ya existe un usuario con este correo electrónico.";
+                return RedirectToAction("Create", "Usuarios");
+            }
         }
 
         // GET: Usuarios/Edit/5
@@ -230,34 +329,37 @@ namespace ProyectoCatedra_DES.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UsuarioId,NombreUsuario,Password,CorreoElectronico,Nombre,Apellido,Activo,Rol,FechaCreacion,UltimoAcceso")] Usuario usuario)
+        public async Task<IActionResult> Edit(int id, Usuario usuario)
         {
             if (id != usuario.UsuarioId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var dbUsuario = await _context.Usuarios
+                .FirstOrDefaultAsync(m => m.UsuarioId == id);
+
+            if (dbUsuario == null)
             {
-                try
-                {
-                    _context.Update(usuario);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UsuarioExists(usuario.UsuarioId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View(usuario);
+
+            dbUsuario.CorreoElectronico = usuario.CorreoElectronico;
+            dbUsuario.Telefono = usuario.Telefono;
+            dbUsuario.Nombre = usuario.Nombre;
+            dbUsuario.Apellidos = usuario.Apellidos;
+            dbUsuario.Dui = usuario.Dui;
+            dbUsuario.FechaNacimiento = usuario.FechaNacimiento;
+            _context.Entry(dbUsuario).Property(u => u.CorreoElectronico).IsModified = true;
+            _context.Entry(dbUsuario).Property(u => u.Telefono).IsModified = true;
+            _context.Entry(dbUsuario).Property(u => u.Nombre).IsModified = true;
+            _context.Entry(dbUsuario).Property(u => u.Apellidos).IsModified = true;
+            _context.Entry(dbUsuario).Property(u => u.Dui).IsModified = true;
+            _context.Entry(dbUsuario).Property(u => u.FechaNacimiento).IsModified = true;
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "Datos del usuario actualizados con exito.";
+            return RedirectToAction("VerPerfil", "Usuarios");
         }
 
         // GET: Usuarios/Delete/5
